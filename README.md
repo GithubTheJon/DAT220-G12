@@ -1,14 +1,8 @@
 TO DO LIST
 
-    DONE    create 5 tables
-    DONE    populate 3 tables 
-
-populate remaining tables (
-    likes,
+populate remaining tables
     followers
     (and some on the comments table)
-)
-
 
     DONE    clicking on user.username redirects to user_page
 
@@ -16,9 +10,9 @@ populate remaining tables (
 
     DONE    show all posts from user on user_page/{username} (html)
 
-Option to show all comments on a post
+    DONE    Option to show all comments on a post
 
-Option to like a post
+    DONE    Option to like a post
 
 option to create a new post
 
