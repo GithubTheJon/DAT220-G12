@@ -38,7 +38,8 @@ def get_data(user_id):
 
 @app.route("/")
 def index():
-    user_id = session.get("user_id")
+    session["user_id"] = 1
+    user_id = session["user_id"]
     posts, comments_by_post, liked_post_ids = get_data(user_id)
     return render_template("index.html", posts=posts,
                            comments_by_post=comments_by_post,
