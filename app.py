@@ -21,12 +21,13 @@ def get_all_posts_with_likes():
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT posts.post_id, users.username, posts.content,
-               (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.post_id)
+       SELECT posts.post_id, users.username, posts.content,
+       (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.post_id),
+       posts.user_id
         FROM posts
         JOIN users ON posts.user_id = users.user_id
         ORDER BY posts.created_at DESC
-    """)
+        """)
     posts = cursor.fetchall()
     conn.close()
     return posts
@@ -75,9 +76,9 @@ def get_user_followers(user_id):
 
 @app.route("/")
 def index():
-    session["user_id"] = 1
+    session["user_id"] = 1    
     user_id = session["user_id"]
-    
+
     posts = get_all_posts_with_likes()
     comments_by_post = get_all_comments_grouped_by_post()
     liked_post_ids = get_user_likes(user_id)
@@ -111,9 +112,6 @@ def user_page(username):
 @app.route("/unlike/<int:post_id>", methods=["POST"])
 def unlike_post(post_id):
     user_id = session.get("user_id")
-    if not user_id:
-        flash("You must be logged in to unlike posts.")
-        return redirect(url_for("index"))
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -125,9 +123,6 @@ def unlike_post(post_id):
 @app.route("/like/<int:post_id>", methods=["POST"])
 def like_post(post_id):
     user_id = session.get("user_id")
-    if not user_id:
-        flash("You must be logged in to like posts.")
-        return redirect(url_for("index"))
 
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
@@ -136,15 +131,12 @@ def like_post(post_id):
     conn.close()
     return redirect(url_for("index"))
 
-@app.route("/comment", methods=["POST"])
-def add_comment():
+@app.route("/create_comment", methods=["POST"])
+def create_comment():
     user_id = session.get("user_id")
     post_id = int(request.form.get("post_id"))  # Make sure this is an int
     content = request.form.get("content", "").strip()
-
-    if not user_id or not post_id or not content:
-        return redirect(url_for("index"))
-
+    
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO comments (post_id, user_id, content) VALUES (?, ?, ?)",
@@ -160,10 +152,6 @@ def create_post():
     user_id = session.get("user_id")
     content = request.form.get("content", "").strip()
 
-    if not user_id or not content:
-        flash("You must be logged in and write something to post.")
-        return redirect(url_for("index"))
-
     conn = sqlite3.connect("database.db")
     cursor = conn.cursor()
     cursor.execute("INSERT INTO posts (user_id, content) VALUES (?, ?)", (user_id, content))
@@ -171,6 +159,58 @@ def create_post():
     conn.close()
 
     return redirect(url_for("index"))
+
+@app.route("/delete_post/<int:post_id>", methods=["POST"])
+def delete_post(post_id):
+    user_id = session.get("user_id")
+
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    # Ensure the post belongs to the current user
+    cursor.execute("SELECT user_id FROM posts WHERE post_id = ?", (post_id,))
+    row = cursor.fetchone()
+
+    if row and row[0] == user_id:
+        # Delete associated likes and comments first if you're not using ON DELETE CASCADE
+        cursor.execute("DELETE FROM likes WHERE post_id = ?", (post_id,))
+        cursor.execute("DELETE FROM comments WHERE post_id = ?", (post_id,))
+        cursor.execute("DELETE FROM posts WHERE post_id = ?", (post_id,))
+        conn.commit()
+        flash("Post deleted.")
+
+    conn.close()
+    return redirect(url_for("index"))
+
+
+@app.route("/edit_post/<int:post_id>", methods=["GET", "POST"])
+def edit_post(post_id):
+    user_id = session.get("user_id")
+    conn = sqlite3.connect("database.db")
+    cursor = conn.cursor()
+
+    if request.method == "POST":
+        new_content = request.form.get("content", "").strip()
+        # Optional: Add length or content validation
+        cursor.execute("SELECT user_id FROM posts WHERE post_id = ?", (post_id,))
+        row = cursor.fetchone()
+
+        if row and row[0] == user_id:
+            cursor.execute("UPDATE posts SET content = ? WHERE post_id = ?", (new_content, post_id))
+            conn.commit()
+            flash("Post updated.")
+
+        conn.close()
+        return redirect(url_for("index"))
+
+    # GET method: render the form
+    cursor.execute("SELECT content, user_id FROM posts WHERE post_id = ?", (post_id,))
+    row = cursor.fetchone()
+    conn.close()
+
+    content = row[0]
+    return render_template("edit_post.html", post_id=post_id, content=content)
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=9091)

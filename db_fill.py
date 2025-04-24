@@ -4,17 +4,17 @@ database = "database.db"
 
 # Sample user data
 users = [
-    ("Alice", "Music, Travel", 120),
-    ("Bob", "Tech, Gaming", 250),
-    ("Charlie", "Reading, Hiking", 39),
-    ("Darwin Smith", "Work", 49),
-    ("Dave Tailor", "Singing in the showers", 56),
+    ("Alice", "Music, Travel"),
+    ("Bob", "Tech, Gaming"),
+    ("Charlie", "Reading, Hiking"),
+    ("Darwin Smith", "Work"),
+    ("Dave Tailor", "Singing in the showers"),
     
-    ("Ole Martin", "Student", 14),
-    ("Michael Bergland", "Video games", 42),
-    ("Tom Hankerchief", "Acting", 1192),
-    ("Joe Robert", "Smoking", 723),
-    ("Alex Bones", "Talking, Aliens", 221)
+    ("Ole Martin", "Student"),
+    ("Michael Bergland", "Video games"),
+    ("Tom Hankerchief", "Acting"),
+    ("Joe Robert", "Smoking"),
+    ("Alex Bones", "Talking, Aliens")
 ]
 
 # Sample post data (likes)
@@ -46,8 +46,8 @@ comments = [
     (6, 8,"papa no more"),
     (7, 9,"Keep it up!"),
     (8, 5,"omg smh, brb"),
-    (9, 4,"LOL")
-    (2, 4,"LOL")
+    (9, 4,"LOL"),
+    (2, 4,"LOL"),
     (5, 4,"LOL")
 ]
 
@@ -129,7 +129,7 @@ def insert_data():
         cursor = conn.cursor()
 
         # Insert users
-        cursor.executemany("INSERT INTO users (username, intrests, followers) VALUES (?, ?, ?)", users)
+        cursor.executemany("INSERT INTO users (username, intrests) VALUES (?, ?)", users)
         conn.commit()
         print("users inserted successfully!")
         

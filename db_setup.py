@@ -17,8 +17,7 @@ def create_connection(db_file):
 sql_create_users_table = """CREATE TABLE IF NOT EXISTS users (
                                 user_id INTEGER PRIMARY KEY,
                                 username TEXT NOT NULL,
-                                intrests TEXT,
-                                followers INT
+                                intrests TEXT
                             );"""
                             
 sql_create_posts_table = """CREATE TABLE IF NOT EXISTS posts (

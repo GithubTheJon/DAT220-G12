@@ -16,7 +16,13 @@ TO DO LIST
 
     Done    option to create a new post
 
-option to delete post if user_id (aka, post belongs to user)
+    DONE    option to delete post if the user created it
 
-Option to Follow a user (that is not yourself)
+    DONE    Also to edit own post
 
+Option to delete others comments on post, where user owns the post
+
+Also to edit own comment
+
+
+Missing 'GROUP BY'
