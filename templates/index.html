@@ -11,24 +11,30 @@
         .option_div {display: flex; justify-content: space-between; align-items: center;}
         .likes { color: red; font-size: 14px; border-radius: 5px; cursor: pointer; background-color: inherit; margin: 0}
         .likes:hover { background-color: rgb(255, 235, 238); box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1)}
-        .comments {color: gray; align-items: center; cursor: pointer}
+        .comments {color: gray; align-items: center; cursor: pointer;}
         .comments:hover { background-color: #faffff; border-radius: 5px; color: black; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1)}
         a {text-decoration: none; color: inherit;}
         .comment-container { width: 60%; margin: 0 auto; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); background-color: #faffff; border-radius: 20px;}
+        textarea { box-sizing: border-box; width: 100%; padding: 10px; border-radius: 5px;}
     </style>
 </head>
 <body>
-    <h2 style="text-align: center;">Recent Posts</h2>
 
+    <h2 style="text-align: center;">Recent Posts</h2>
     
     <div class="post-container">
         <div class="post">
-            <h3 style="align-content: center"> Create New Post</h3>
+            <h3>Create New Post</h3>
+            <form method="POST" action="{{ url_for('create_post') }}">
+                <textarea name="content" placeholder="What's on your mind?" rows="3" required></textarea>
+                <button type="submit" style="margin-top: 10px; padding: 5px 10px; border-radius: 5px;">Post</button>
+            </form>
         </div>
     </div>
 
     <div class="post-container">
         {% for post in posts %}
+            {% set comments = comments_by_post.get(post_id, []) %}
             {% set post_id = post[0] %}
             {% set username = post[1] %}
             {% set content = post[2] %}
@@ -60,15 +66,24 @@
                 
                     <div class="comments" onclick="toggleComments('comments-{{ post_id }}')">show comments</div>
                 </div>
-                
-                
     
                 <div id="comments-{{ post_id }}" class="comment-container" style="display: none; padding: 10px;">
-                    {% for comment in comments_by_post.get(post_id, []) %}
-                        <p><strong>{{ comment.username }}:</strong> {{ comment.content }}</p>
-                    {% else %}
-                        <p style="color: black;">No comments yet.</p>
+                    {% set comments = comments_by_post.get(post_id, []) %}
+                    {% if comments %}
+                    {% for comment in comments %}
+                        <div class="post">
+                            <p><strong>{{ comment.username }}:</strong> {{ comment.content }}</p>
+                        </div>
                     {% endfor %}
+                    {% else %}
+                        <p style="color: gray;">No comments yet.</p>
+                    {% endif %}
+                
+                    <form method="POST" action="{{ url_for('add_comment') }}">
+                        <input type="hidden" name="post_id" value="{{ post_id }}">
+                        <input type="text" name="content" placeholder="What's on your mind?" required style="width: 80%; padding: 5px;">
+                        <button type="submit" class="comments" style="border-radius: 5px;">Post</button>
+                    </form>
                 </div>
             </div>
         {% endfor %}
@@ -76,8 +91,16 @@
 
     <script>
         function toggleComments(id) {
-            const show_comments = document.getElementById(id);
-            show_comments.style.display = (show_comments.style.display === "none" || show_comments.style.display === "") ? "block" : "none";
+            const section = document.getElementById(id);
+            const toggleBtn = event.target;
+    
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+                toggleBtn.textContent = "hide comments";
+            } else {
+                section.style.display = "none";
+                toggleBtn.textContent = "show comments";
+            }
         }
     </script>
     

@@ -8,18 +8,38 @@
         .post { background: white; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1); }
         .content { margin: 10px 0; }
         .likes { color: red; font-size: 14px; }
+        h1, h2 { justify-self: center;}
     </style>
 </head>
 <body>
-    <div class="profile-container">
-        <h2>{{ username }}'s Posts</h2>
-        {% for post in user_posts %}
-            <div class="post">
-                <div class="content">{{ post[0] }}</div>
-                <div class="likes">❤️ {{ post[1] }} Likes</div>
-                <div class="comment">Comments so far ?</div>
-            </div>
-        {% endfor %}
+
+<h1>{{ username }}'s Posts</h1>
+
+<h2>{{ username }}'s Followers <strong>({{ followers | length }})</strong></h2>
+
+<div class="profile-container">    
+    {% for post in user_posts %}
+    <div class="post">
+        <div class="username">
+            <h2> {{ username }}</h2>
+        </div>
+        <div class="content">{{ post[2] }}</div>
+        <div class="likes">❤️ {{ post[3] }} Likes</div>
     </div>
+    {% endfor %}
+</div>
+<hr>
+<h1 style="justify-self: center">{{ username }}'s Comments</h1>
+
+<div class="profile-container">    
+    {% for post_content, comment_content in user_comments %}
+    <div class="post">
+        <p><strong>On post:</strong> {{ post_content }}</p>
+        <p><strong>Comment:</strong> {{ comment_content }}</p>
+    </div>
+    {% endfor %}
+
+</div>
+
 </body>
 </html>

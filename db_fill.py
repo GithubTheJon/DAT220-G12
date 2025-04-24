@@ -36,6 +36,7 @@ posts = [
 #ID, Likes, Content
 comments = [
     (3, 6, "PP"),
+    (3, 6, "PePe"),
     (6, 10,"Take me home to the country road!"),
     (4, 5, "Good lord"),
     (1, 1, "Liked my own post... SO WHAT!"),
@@ -46,6 +47,8 @@ comments = [
     (7, 9,"Keep it up!"),
     (8, 5,"omg smh, brb"),
     (9, 4,"LOL")
+    (2, 4,"LOL")
+    (5, 4,"LOL")
 ]
 
 likes = [
@@ -102,6 +105,24 @@ likes = [
 
 ]
 
+followers = [
+    (8,1),
+    (1,6),
+    (1,7),
+    (1,8),
+    (1,9),
+    (2,8),
+    (2,9),
+    (3,8),
+    (4,7),
+    (5,6),
+    (6,5),
+    (7,4),
+    (8,3),
+    (9,2),
+    (4,1)
+]
+
 def insert_data():
     try:
         conn = sqlite3.connect(database)
@@ -123,6 +144,11 @@ def insert_data():
         cursor.executemany("INSERT INTO likes (post_id, user_id) VALUES (?, ?)", likes)
         conn.commit()
         print("likes inserted successfully!")
+        
+        cursor.executemany("INSERT INTO followers (user1_id, user2_id) VALUES (?, ?)", followers)
+        conn.commit()
+        print("followers inserted successfully!")
+    
     
     except sqlite3.Error as e:
         print("SQLite error:", e)

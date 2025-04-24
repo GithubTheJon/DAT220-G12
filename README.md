@@ -1,8 +1,8 @@
 TO DO LIST
 
-populate remaining tables
-    followers
-    (and some on the comments table)
+    Done    populate remaining tables
+    Done    followers
+    Done    (and some on the comments table)
 
     DONE    clicking on user.username redirects to user_page
 
@@ -14,6 +14,9 @@ populate remaining tables
 
     DONE    Option to like a post
 
-option to create a new post
+    Done    option to create a new post
 
 option to delete post if user_id (aka, post belongs to user)
+
+Option to Follow a user (that is not yourself)
+
